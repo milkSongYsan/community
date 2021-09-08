@@ -55,6 +55,7 @@ public class AuthoirzeController {
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtModified());
+            user.setAvatarUrl(githubUser.getAvatar_url());
             userMapper.insert(user);
             response.addCookie(new Cookie("token", token));
             return "redirect:/";
