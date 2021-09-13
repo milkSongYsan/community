@@ -1,35 +1,32 @@
 package com.community.controller;
 
 
+import com.community.dto.QuestionDTO;
+import com.community.mapper.QuestionMapper;
 import com.community.mapper.UserMapper;
+import com.community.model.Question;
 import com.community.model.User;
+import com.community.service.QuestionService;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.RequestParam;
+import java.util.List;
 
 @Controller
 public class IndexController {
+
     @Autowired
-    private UserMapper userMapper;
+    private QuestionService questionService;
 
     @GetMapping("/")
-    public String index(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-        if(cookies != null && cookies.length != 0) {
-            for (Cookie cookie: cookies) {
-                if(cookie.getName().equals("token")) { // getName为token的字符串对象("token", token)
-                    String token = cookie.getValue();
-                    User user = userMapper.findByToken(token);
-                    if(user != null) {
-                        request.getSession().setAttribute("user", user);
-                    }
-                    break;
-                }
-            }
-        }
+    public String index(Model model,
+                        @RequestParam(name = "size", defaultValue = "5") Integer size,
+                        @RequestParam(name = "page", defaultValue = "1") Integer page) {
+        List<QuestionDTO> questionList= questionService.list();
+        model.addAttribute("questions", questionList);
         return "index";
     }
 }
